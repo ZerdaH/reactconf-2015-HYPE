@@ -1,6 +1,15 @@
 /** @jsx React.DOM */
 var start = Date.now();
 var loadCount = 0;
+var allTime = 0;
+var updates = 0;
+var avgTime = 0;
+var timerEl = document.getElementById("timerEl");
+function logTime(elapsed) {
+  allTime += elapsed;
+  avgTime = allTime / ++updates;
+  timerEl.textContent = Math.floor(avgTime);
+}
 
 function getData() {
   // generate some dummy data
@@ -156,6 +165,7 @@ var DBMon = React.createClass({
   },
 
   loadSamples: function () {
+    var updateStart = Date.now();
     loadCount++;
     var newData = getData();
 
@@ -180,6 +190,7 @@ var DBMon = React.createClass({
     }.bind(this));
 
     this.setState(this.state);
+    logTime(Date.now() - updateStart);
     setTimeout(this.loadSamples, ENV.timeout);
   },
 
@@ -210,5 +221,5 @@ var DBMon = React.createClass({
 });
 
 React.render(<DBMon />, document.getElementById('dbmon'), function() {
-  console.log(Date.now() - start);
+  $("#initTimeEl").text(Date.now() - start);
 });

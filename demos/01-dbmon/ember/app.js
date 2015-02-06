@@ -1,4 +1,13 @@
 var start = Date.now();
+var allTime = 0;
+var updates = 0;
+var avgTime = 0;
+var timerEl = document.getElementById("timerEl");
+function logTime(elapsed) {
+  allTime += elapsed;
+  avgTime = allTime / ++updates;
+  timerEl.textContent = Math.floor(avgTime);
+}
 
 var App, Database, _base, _base1;
 var loadCount = 0;
@@ -42,6 +51,7 @@ Database.reopenClass({
     return db;
   },
   loadLatest: function() {
+    var updateStart = Date.now();
     var data, db, dbname, i, info, q, r, url, _i, _j, _ref, _results;
     data = {
       start_at: new Date().getTime() / 1000,
@@ -93,6 +103,7 @@ Database.reopenClass({
       loadCount++;
       Database.loadLatest();
     }, ENV.timeout);
+    logTime(Date.now() - updateStart);
   }
 });
 
@@ -202,6 +213,6 @@ Ember.Handlebars.registerBoundHelper('formatElapsed', function(value) {
 
 App.ApplicationView = Ember.View.extend({
   didInsertElement: function() {
-    console.log(Date.now() - start);
+    document.getElementById("initTimeEl").textContent = Date.now() - start;
   }
 });

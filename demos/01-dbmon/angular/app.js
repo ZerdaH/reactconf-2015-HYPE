@@ -1,3 +1,14 @@
+var start = Date.now();
+var allTime = 0;
+var updates = 0;
+var avgTime = 0;
+var timerEl = document.getElementById("timerEl");
+function logTime(elapsed) {
+  allTime += elapsed;
+  avgTime = allTime / ++updates;
+  timerEl.textContent = Math.floor(avgTime);
+}
+
 function getData() {
   // generate some dummy data
   var data = {
@@ -127,6 +138,7 @@ angular.module('app', [])
     $scope.topFiveQueries = {};
 
     var load = function() {
+      var updateStart = Date.now();
       var newData = getData();
 
       Object.keys(newData.databases).forEach(function(dbname) {
@@ -152,7 +164,9 @@ angular.module('app', [])
         $scope.topFiveQueries[dbname] = RenderService.getTopFiveQueries($scope.databases[dbname]);
       });
       $timeout(load, ENV.timeout);
+      logTime(Date.now() - updateStart);
     };
 
     load();
+    document.getElementById("initTimeEl").textContent = Date.now() - start;
   });
